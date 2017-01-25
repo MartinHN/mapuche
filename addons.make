@@ -1,0 +1,6 @@
+ofx3DModelLoader
+ofxGui
+ofxOsc
+ofxSyphon
+ofxUI
+ofxXmlSettings
