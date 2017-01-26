@@ -7,7 +7,7 @@
 //
 
 #include "InputMediaManager.hpp"
-
+#include "OutputViewManager.hpp"
 
 #include "InputSyphon.hpp"
 
@@ -58,7 +58,26 @@ void InputMediaManager::paint(){
       selected->getTexture().draw(b);
     }
     selected->drawSubsection(b,b);
+    if(OutputView * selO = OutputViewManager::i()->selected.get()){
+      ofVec2f scale  = ofVec2f(b.getWidth(),b.getHeight())/ selected->getSize();
+      int lidx = 0;
+      ofNoFill();
+      for(auto & l:selO->layers){
+        if(l.media==selected){
+          ofRectangle sR = l.inputRect;
+          sR.scale(scale);
+          sR.x*=scale.x;
+          sR.y*=scale.y;
+          ofSetColor(lidx%3==0?255:0,lidx%3==1?255:0,lidx%3==2?255:0,255);
+
+          ofDrawRectangle(sR);
+        }
+      lidx++;
+      }
+
+
     }
+  }
 
   ofPopStyle();
 
@@ -78,7 +97,7 @@ shared_ptr<InputMedia> InputMediaManager::addMedia(unique_ptr<InputMedia> m){
   mediaAdded.notify(sp);
   ddlInputMedias->addToggle(sp->name);
   return sp;
-  
+
 }
 
 void InputMediaManager::removeMedia(InputMedia *m){
@@ -123,9 +142,9 @@ shared_ptr<InputMedia> InputMediaManager::getInputMediaForName(const string & n)
 // syphon
 
 void InputMediaManager::newSyphonServer(ofxSyphonServerDirectoryEventArgs & a){
-//  for(auto & s:a.servers){
-//    addMedia(make_unique<InputSyphon>(s));
-//  }
+  //  for(auto & s:a.servers){
+  //    addMedia(make_unique<InputSyphon>(s));
+  //  }
 
 }
 void InputMediaManager::syphonServerUpdated(ofxSyphonServerDirectoryEventArgs & a){
@@ -133,7 +152,7 @@ void InputMediaManager::syphonServerUpdated(ofxSyphonServerDirectoryEventArgs & 
 }
 
 void InputMediaManager::syphonServerRemoved(ofxSyphonServerDirectoryEventArgs & a){
-  
+
 }
 
 //////////////
@@ -152,5 +171,5 @@ void InputMediaManager::newGUIEvent( ofxUIEventArgs & a){
       }
     }
   }
-
+  
 }

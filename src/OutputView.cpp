@@ -99,10 +99,16 @@ void OutputView::updateOverlaps(){
     }
     cout << l.overlapEdge.x << "," << l.overlapEdge.y << ";;" << l.inputRect <<  endl;
   }
+
+
   for(auto & l : layers){
     l.updateEdgeMesh();
   }
+  
+}
 
+ofVec2f OutputView::getWindowSize(){
+  return window.lock()->getWindowSize();
 }
 void OutputView::windowResized(int w, int h){
   

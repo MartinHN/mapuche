@@ -42,6 +42,7 @@ void OutputViewManager::paint(){
   if(selected){
     ofPushStyle();
     ofPushMatrix();
+    ofPushView();
     renderViewSelected.allocate(selected->window.lock()->getWidth(),selected->window.lock()->getHeight());
     renderViewSelected.begin();
     glClearColor(0.,0.,0.,  255.);
@@ -52,7 +53,7 @@ void OutputViewManager::paint(){
     renderViewSelected.draw(b);
 
     ofSetLineWidth(.1);
-    ofPoint scale = ofPoint(b.width,b.height) / selected->window.lock()->getWindowSize();
+    ofPoint scale = ofPoint(b.width,b.height) / selected->getWindowSize();
     int lidx = 0;
 
     for(auto & l:selected->layers){
@@ -64,6 +65,7 @@ void OutputViewManager::paint(){
       }
       lidx++;
     }
+    ofPopView();
     ofPopMatrix();
     ofPopStyle();
   }

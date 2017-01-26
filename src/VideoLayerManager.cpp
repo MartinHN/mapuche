@@ -96,3 +96,5 @@ void VideoLayerManager::newGUIEvent(  ofxUIEventArgs & a){
     }
   }
 }
+
+

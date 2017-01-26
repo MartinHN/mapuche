@@ -36,10 +36,11 @@ string ofxProjectorBlendFragShader(int blends) {
             uniform float OverlapTop;
             uniform float OverlapBottom;
 
-            uniform float BlackOutLeft;
-            uniform float BlackOutRight;
-            uniform float BlackOutTop;
-            uniform float BlackOutBottom;
+//            uniform float BlackOutLeft;
+//            uniform float BlackOutRight;
+//            uniform float BlackOutTop;
+//            uniform float BlackOutBottom;
+
             uniform float SolidEdgeEnable;
             uniform vec4  SolidEdgeColor;
 
@@ -187,7 +188,7 @@ string ofxProjectorBlendFragShader(int blends) {
             void main (void)
             {
               vec4 overlap = vec4 (OverlapLeft, OverlapRight, OverlapBottom, OverlapTop);
-              vec4 blankout = vec4 (BlackOutLeft, BlackOutRight, BlackOutBottom, BlackOutTop);
+              vec4 blankout = vec4 (0,0,0,0);//BlackOutLeft, BlackOutRight, BlackOutBottom, BlackOutTop);
               if (SolidEdgeEnable == 1.0) {
                 gl_FragData[0] =drawSolidEdges(overlap, blankout, SolidEdgeColor);
               }
@@ -197,7 +198,89 @@ string ofxProjectorBlendFragShader(int blends) {
             }
             );
   return shader;
-}
+};
+
+string ofxProjectorBlendFragShader2(int blends) {
+  string shader =
+  STRINGIFY(
+            uniform sampler2DRect Tex0;
+            uniform vec2  texCoordOffset;
+            // used in a few inversions
+            const vec3 one = vec3(1.0);
+            /*
+            //const vec3 gamma = vec3(1.8, 1.5, 1.2);
+            //const vec3 luminance = vec3(0.5);
+*/
+            // controls the interpolation curve ([1..n], 1.0 = linear, 2.0 = default quadratic)
+            uniform float BlendPower; // try: 2.0;
+            // controls the center of interpolation ([0..1], 0.5 = linear)
+            uniform float SomeLuminanceControl; // try: vec3(0.5);
+            /*
+            // controls gamma levels ([1..n], 1.8 or 2.2 is typical)
+            //uniform vec3 gamma; // try: vec3(1.8, 1.5, 1.2);
+            // controls blending area at left, top, right and bottom in percentages ([0..0.5])
+//            uniform vec4 amount;
+             */
+            uniform float OverlapLeft;
+            uniform float OverlapRight;
+            uniform float OverlapTop;
+            uniform float OverlapBottom;
+            //uniform vec4 edges; // try: vec4(0.4, 0.4, 0.0, 0.0);
+
+            uniform float width;
+            uniform float height;
+            uniform float GammaCorrection;
+
+            void main(){
+              /*
+              //this is the fragment shader
+              //this is where the pixel level drawing happens
+              //gl_FragCoord gives us the x and y of the current pixel its drawing
+
+              //we grab the x and y and store them in an int
+*/
+              vec2 uv = gl_TexCoord[0].xy-texCoordOffset;
+              //vec4 col = texture2D(tex,uv).xyz;
+              vec4 col = texture2DRect(Tex0,gl_TexCoord[0].xy / vec2(1));//+texCoordOffset);
+              /*
+              //vec2 uv = vec2(gl_FragCoord.x, gl_FragCoord.y);
+              //vec4 col = gl_Color;
+               */
+              vec4 edges = vec4(OverlapLeft, OverlapTop, OverlapRight, OverlapBottom);
+              //vec3 gamma = vec3(GammaCorrection, 1.5, 1.2);
+              vec3 gamma = vec3(GammaCorrection, GammaCorrection, GammaCorrection);
+              vec3 luminance = vec3(SomeLuminanceControl + 0.5);
 
 
+
+
+              // calculate edge blending factor
+              float a = 1.0;
+
+              if(edges.x > 0.0) a *= clamp(uv.x*1.0/edges.x, 0.0, 1.0);
+              if(edges.y > 0.0) a *= clamp(uv.y*1.0/edges.y, 0.0, 1.0);
+              if(edges.z > 0.0) a *= clamp(((width)-uv.x)*1.0/edges.z, 0.0, 1.0);
+              if(edges.w > 0.0) a *= clamp(((height)-uv.y)*1.0/edges.w, 0.0, 1.0);
+
+              // blend function with luminance control (for each of the 3 channels)
+              vec3 blend = (a < 0.5) ? (luminance * pow(2.0 * a, BlendPower))
+              : one - (one - luminance) * pow(2.0 * (1.0 - a), BlendPower);
+              
+              // gamma correction (for each of the 3 channels)
+//              blend = pow(blend, one / gamma);
+
+              // set final color
+              //gl_FragColor = vec4(col * blend, 1.0);
+
+
+              gl_FragColor = vec4(col.xyz*a,1);// col.w*blend.x);
+
+//              gl_FragData[0] = vec4(col.xyz*blend, col.w*blend.x);
+
+//              gl_FragColor = vec4(col.xyz*uv.x/width , 1.0);
+            }
+
+  );
+  return shader;
+};
 

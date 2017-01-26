@@ -50,6 +50,7 @@ public:
 //  ofEvent<ofPoint> viewResized;
 
   void updateOverlaps();
+  ofVec2f getWindowSize();
   string name;
 
 };

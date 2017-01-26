@@ -121,11 +121,11 @@ void ofApp::openArenaLayout(const string & path){
     int dbg = 0;
     ofPoint mediaSize (7200,1080);
 
-    mainComponent.vMgr->addView("big",ofGetScreenWidth(),0,3840*2,1024);
+    mainComponent.vMgr->addView("big",ofGetScreenWidth(),0,3840*2,1080);
     ofVec2f outScale (1,1);
 
-//    mainComponent.vMgr->addView("big",0,0,3840*2,1024);
-//    mainComponent.vMgr->addView("big",0,0,3840/2,1024);
+//    mainComponent.vMgr->addView("big",0,0,3840*2,1080);
+//    mainComponent.vMgr->addView("big",0,0,3840/2,1080);
 //    ofVec2f outScale (.25,1);
     int screenOffset = 0;
     for(auto &s:screens){

@@ -26,20 +26,20 @@ inline void drawSubsection(const ofTexture & t, const ofRectangle & src,const of
 VideoLayer::VideoLayer(shared_ptr<InputMedia> m ):normalizedSubSection(0,0,1,1)
 {
   media = m;
-  useBlendShader= false;
+  useBlendShader= true;
   if(!useBlendShader && blendImage == nullptr){
     blendImage = new ofImage("edge.png");
   }
   if(useBlendShader  &&!blendShader){
     blendShader = new ofShader();
     blendShader->unload();
-    blendShader->setupShaderFromSource(GL_FRAGMENT_SHADER, ofxProjectorBlendFragShader(NUM_BLENDED_LAYERS));
+    blendShader->setupShaderFromSource(GL_FRAGMENT_SHADER, ofxProjectorBlendFragShader2(NUM_BLENDED_LAYERS));
     blendShader->setupShaderFromSource(GL_VERTEX_SHADER, ofxProjectorBlendVertShader);
     blendShader->linkProgram();
 
     overlapEdge = ofVec4f(0,0,0,0);
-    blendPower  = 1;
-    blendLuminance = 1;
+    blendPower  = 2;
+    blendLuminance = 0.5;
     blendGamma = 1;
 
   }
@@ -61,13 +61,13 @@ void VideoLayer::updateShaderUniforms(){
   blendShader->setUniform1f("OverlapTop", overlapEdge.z);
   blendShader->setUniform1f("OverlapBottom", overlapEdge.w);
 
-  blendShader->setUniform1f("BlackOutLeft", 0);
-  blendShader->setUniform1f("BlackOutRight", 0);
-  blendShader->setUniform1f("BlackOutTop", 0);
-  blendShader->setUniform1f("BlackOutBottom", 0);
-
-  blendShader->setUniform1f("SolidEdgeEnable", 1);
-  blendShader->setUniform4f("SolidEdgeColor", 255,0,0,255);
+//  blendShader->setUniform1f("BlackOutLeft", 0);
+//  blendShader->setUniform1f("BlackOutRight", 0);
+//  blendShader->setUniform1f("BlackOutTop", 0);
+//  blendShader->setUniform1f("BlackOutBottom", 0);
+//
+//  blendShader->setUniform1f("SolidEdgeEnable", 1);
+//  blendShader->setUniform4f("SolidEdgeColor", 255,0,0,255);
   blendShader->setUniform2f("texCoordOffset", inputRect.x, inputRect.y);
   if(media->hasTexture){
     blendShader->setUniformTexture("Tex0", media->getTexture(), 0);
@@ -86,15 +86,21 @@ void VideoLayer::draw(){
     if(media->hasTexture){
       if(media->hasValidTexture()){
 
-
-        if(useBlendShader)blendShader->begin();
-        updateShaderUniforms();
+        ofEnableAlphaBlending();
+        if(useBlendShader)
+        {blendShader->begin();
+                  updateShaderUniforms();}
         ofSetColor(255,255,255,255);
         media->getTexture().bind();
         drawMesh.draw();
         media->getTexture().unbind();
         if(useBlendShader)blendShader->end();
         if(!useBlendShader){
+
+          glEnable(GL_BLEND);
+//          glBlendColor(1,1,1,0);
+          glBlendEquation(GL_FUNC_ADD);
+          glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
           blendImage->bind();
           edgeMeshR.draw();
           edgeMeshL.draw();
@@ -175,6 +181,7 @@ void  VideoLayer::updateMesh(){
 
 }
 void  VideoLayer::updateEdgeMesh(){
+  if(useBlendShader) return;
   edgeMeshL = ofMesh::plane(1,1,2,2,OF_PRIMITIVE_TRIANGLES);
   edgeMeshR = ofMesh::plane(1,1,2,2,OF_PRIMITIVE_TRIANGLES);
   int v0 = 3;
