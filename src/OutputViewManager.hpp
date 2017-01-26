@@ -30,7 +30,7 @@ private:
   void paint()override;
   void resized()override;
 
-  void addView(const string & name);
+  void addView(const string & name,int x, int y,int w,int h);
   void removeView(const string & name);
 
 

@@ -64,15 +64,20 @@ void InputMediaManager::paint(){
 
 };
 
-void InputMediaManager::selectMedia(Sp m){
-  
+void InputMediaManager::selectMedia(InputMedia::Sp m){
+  selected = m;
 }
 
-void InputMediaManager::addMedia(unique_ptr<InputMedia> m){
+
+InputMedia::Sp InputMediaManager::getSelectedMedia(){
+  return selected;
+}
+shared_ptr<InputMedia> InputMediaManager::addMedia(unique_ptr<InputMedia> m){
   auto sp = shared_ptr<InputMedia>(std::move(m));
   allMedias.push_back(sp);
   mediaAdded.notify(sp);
   ddlInputMedias->addToggle(sp->name);
+  return sp;
   
 }
 
@@ -118,9 +123,9 @@ shared_ptr<InputMedia> InputMediaManager::getInputMediaForName(const string & n)
 // syphon
 
 void InputMediaManager::newSyphonServer(ofxSyphonServerDirectoryEventArgs & a){
-  for(auto & s:a.servers){
-    addMedia(make_unique<InputSyphon>(s));
-  }
+//  for(auto & s:a.servers){
+//    addMedia(make_unique<InputSyphon>(s));
+//  }
 
 }
 void InputMediaManager::syphonServerUpdated(ofxSyphonServerDirectoryEventArgs & a){
@@ -142,7 +147,7 @@ void InputMediaManager::newGUIEvent( ofxUIEventArgs & a){
         auto mediaIt = find_if(allMedias.begin(), allMedias.end(),
                                [n] (const shared_ptr<InputMedia>& s){return s.get()->name==n;});
         if(mediaIt!=allMedias.end()){
-          selected = *mediaIt;
+          selectMedia( *mediaIt);
         }
       }
     }

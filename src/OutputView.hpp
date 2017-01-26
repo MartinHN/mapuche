@@ -16,37 +16,40 @@
 
 class OutputView : public ofBaseApp{
 public:
-  OutputView(const string & name);
-  ~OutputView();
+  OutputView(const string & _name);
+ virtual  ~OutputView();
+
+  static shared_ptr<OutputView>generate(const string & name,int x, int y,int w,int h);
 
 
-  void setup(){};
-		void update(){};
-		void draw();
+  void setup()override{};
+		void update()override{};
+		void draw()override;
 
-		void keyPressed(int key){};
-		void keyReleased(int key){};
-		void mouseMoved(int x, int y ){};
-		void mouseDragged(int x, int y, int button){};
-		void mousePressed(int x, int y, int button){};
-		void mouseReleased(int x, int y, int button){};
-		void mouseEntered(int x, int y){};
-		void mouseExited(int x, int y){};
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo){};
-		void gotMessage(ofMessage msg){};
+		void keyPressed(int key)override{};
+		void keyReleased(int key)override{};
+		void mouseMoved(int x, int y )override{};
+		void mouseDragged(int x, int y, int button)override{};
+		void mousePressed(int x, int y, int button)override{};
+		void mouseReleased(int x, int y, int button)override{};
+		void mouseEntered(int x, int y)override{};
+		void mouseExited(int x, int y)override{};
+		void windowResized(int w, int h)override;
+		void dragEvent(ofDragInfo dragInfo)override{};
+		void gotMessage(ofMessage msg)override{};
 
 
-  void shouldClose() {window->setWindowShouldClose();};
+  void shouldClose() ;
 
-  void addMediaLayer(shared_ptr<InputMedia> media  );
+  VideoLayer * addMediaLayer(shared_ptr<InputMedia> media  );
   
 
   vector<VideoLayer> layers;
-  shared_ptr<ofAppBaseWindow> window;
+
+  weak_ptr<ofAppBaseWindow> window;
 //  ofEvent<ofPoint> viewResized;
 
-
+  void updateOverlaps();
   string name;
 
 };

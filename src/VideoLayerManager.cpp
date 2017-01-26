@@ -18,22 +18,22 @@ VideoLayerManager::VideoLayerManager():UIComponent("videoLayerManager"){
 void VideoLayerManager::buildFromOutView(shared_ptr<OutputView> _outView){
   outView = _outView;
   if(outView){
-  cnv = make_unique<ofxUISuperCanvas>(outView->name+" layers",200,200,200,200);
-  addLayerB = new ofxUIButton("add",false,10,10);
-  removeLayerB= new ofxUIButton("remove",false,10,10);
-  std::vector<string> dummy;
-  layerDDL = new ofxUIDropDownList("layers",dummy,cnv->getRect()->width -20,100);
-
-  layerDDL->open();
-  //  views->setAllowMultiple(true);
-
-
-  cnv->addWidgetDown(addLayerB);
-  cnv->addWidgetRight(removeLayerB);
-  cnv->addWidgetDown(layerDDL);
-
-  cnv->newGUIEvent.add(this, &VideoLayerManager::newGUIEvent, 0);
-    cnv->getRect()->setParent(nullptr);
+//  cnv = make_unique<ofxUISuperCanvas>(outView->name+" layers",200,200,200,200);
+//  addLayerB = new ofxUIButton("add",false,10,10);
+//  removeLayerB= new ofxUIButton("remove",false,10,10);
+//  std::vector<string> dummy;
+//  layerDDL = new ofxUIDropDownList("layers",dummy,cnv->getRect()->width -20,100);
+//
+//  layerDDL->open();
+//  //  views->setAllowMultiple(true);
+//
+//
+//  cnv->addWidgetDown(addLayerB);
+//  cnv->addWidgetRight(removeLayerB);
+//  cnv->addWidgetDown(layerDDL);
+//
+//  cnv->newGUIEvent.add(this, &VideoLayerManager::newGUIEvent, 0);
+//    cnv->getRect()->setParent(nullptr);
   }
   else{
     cnv = nullptr;
@@ -63,7 +63,7 @@ vector <string> VideoLayerManager::getSelectedLayers(){
 
 
 void VideoLayerManager::addLayer(const string &name){
-  outView->addMediaLayer(InputMediaManager::i()->selected);
+  outView->addMediaLayer(InputMediaManager::i()->getSelectedMedia());
   
 }
 void VideoLayerManager::removeLayer(const string & name){

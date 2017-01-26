@@ -148,6 +148,7 @@
 		3F0C927F1E32C8FF00BA2DA1 /* VideoLayerManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VideoLayerManager.hpp; sourceTree = "<group>"; };
 		3F0C92831E32D0C000BA2DA1 /* UIComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIComponent.cpp; sourceTree = "<group>"; };
 		3F0C92841E32D0C000BA2DA1 /* UIComponent.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = UIComponent.hpp; sourceTree = "<group>"; };
+		3F1E0E581E39E36500FE59FA /* EdgeBlendShader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EdgeBlendShader.h; sourceTree = "<group>"; };
 		3F25EF5B1E3251B50074BCA9 /* InputSyphon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputSyphon.cpp; sourceTree = "<group>"; };
 		3F25EF5C1E3251B50074BCA9 /* InputSyphon.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = InputSyphon.hpp; sourceTree = "<group>"; };
 		3F25EF5E1E32578F0074BCA9 /* VideoLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoLayer.cpp; sourceTree = "<group>"; };
@@ -395,6 +396,7 @@
 			children = (
 				3F25EF5E1E32578F0074BCA9 /* VideoLayer.cpp */,
 				3F25EF5F1E32578F0074BCA9 /* VideoLayer.hpp */,
+				3F1E0E581E39E36500FE59FA /* EdgeBlendShader.h */,
 				3F8A0DC11E34FCD000994AE1 /* VideoLayerUI.cpp */,
 				3F8A0DC21E34FCD000994AE1 /* VideoLayerUI.hpp */,
 				3F0C927E1E32C8FF00BA2DA1 /* VideoLayerManager.cpp */,
@@ -1041,7 +1043,7 @@
 			buildSettings = {
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/bin/";
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
+				DEAD_CODE_STRIPPING = NO;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
@@ -1085,6 +1087,7 @@
 					"-mtune=native",
 				);
 				SDKROOT = macosx;
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Debug;
 		};

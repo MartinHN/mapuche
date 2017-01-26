@@ -5,7 +5,8 @@
 #include "UIComponent.hpp"
 #include "OutputViewManager.hpp"
 #include "InputMediaManager.hpp"
-
+#include "ofxSyphon.h"
+#include "InputSyphon.hpp"
 
 class ofApp : public ofBaseApp {
 
@@ -25,7 +26,7 @@ class ofApp : public ofBaseApp {
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-
+  void openArenaLayout(const string & path);
   class MainLayout:public UIComponent{
   public:
     MainLayout():UIComponent("MainLayout"){
@@ -38,9 +39,11 @@ class ofApp : public ofBaseApp {
       addNewChild(vMgr);
 
       // dummy
-      iMgr->addMedia(make_unique<DummyMedia>("testMedia"));
-      iMgr->selected = iMgr->getInputMediaForName("testMedia");
-      vMgr->addView("lala");
+      ofxSyphonServerDescription desc("ImMedia","ImMedia");
+      auto sypMedia = iMgr->addMedia(make_unique<InputSyphon>(desc));
+      iMgr->selectMedia (sypMedia);
+      
+//      vMgr->addView("lala");
 
     }
 
@@ -64,12 +67,11 @@ class ofApp : public ofBaseApp {
 
   };
   MainLayout mainComponent;
-    
+  string toLoad;
 
 //		OutputViewManager outViewManager;
 //  InputMediaManager inputMediaManager;
 };
 
 
-extern shared_ptr<ofApp> mainApp;
-shared_ptr<ofApp> getApp(){return mainApp;};
+

@@ -53,12 +53,16 @@ class InputMedia{
 class DummyMedia : public InputMedia{
 public:
   DummyMedia(const string & name):InputMedia(name){
-    hasTexture = false;
+    dirtyFBO = true;
+
 
   }
 
 
-  void drawSubsection(const ofRectangle & subSection,const ofRectangle & dest) override{
+  void drawFBO() {
+    ofRectangle  dest(0,0,200,200);
+    fbo.allocate(dest.width,dest.height);
+    fbo.begin();
     ofFill();
     int w = dest.width/2;
     int h = dest.height/2;
@@ -75,14 +79,16 @@ public:
 
     ofSetColor(ofColor(0));
     ofDrawBitmapString(name, dest.getCenter());
+    fbo.end();
   };
 
   ofTexture & getTexture() override{
-    return emptyT;
+    if(dirtyFBO){drawFBO();dirtyFBO = false;}
+    return fbo.getTexture();
   }
 
-  ofTexture emptyT;
-  
+  ofFbo fbo;
+  bool dirtyFBO;
   
   
   

@@ -12,7 +12,7 @@
 #include "ofMain.h"
 #include "ofxSyphonServerDirectory.h"
 
-class InputMedia;
+#include"InputMedia.hpp"
 #include "ofxUI.h"
 #include "UIComponent.hpp"
 
@@ -27,8 +27,9 @@ public:
   void paint()override;
   void resized() override;
 
-  void addMedia(unique_ptr<InputMedia> m);
+  shared_ptr<InputMedia> addMedia(unique_ptr<InputMedia> m);
   void removeMedia(InputMedia * m);
+  void selectMedia(InputMedia::Sp m);
 
   //////
   // syphon
@@ -48,11 +49,12 @@ public:
   vector<shared_ptr<InputMedia> > allMedias;
   vector<shared_ptr<InputMedia> > allActiveMedias;
 
-  shared_ptr<InputMedia> selected;
+
 
   shared_ptr<InputMedia> getInputMediaForName(const string & );
+  shared_ptr<InputMedia> getSelectedMedia( );
 private:
-  
+  shared_ptr<InputMedia> selected;
 
   ofxUISuperCanvas cnv;
   ofxUIDropDownList * ddlInputMedias;

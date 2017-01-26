@@ -13,7 +13,7 @@ OutputViewManager * OutputViewManager::instance(nullptr);
 
 OutputViewManager::OutputViewManager():
 UIComponent("outView"),
-selected(nullptr),
+
 cnv ("OutView",200,200,200,200)
 {
 
@@ -41,11 +41,30 @@ void OutputViewManager::paint(){
   ofRectangle b = getLocalBounds();
   if(selected){
     ofPushStyle();
-    renderViewSelected.allocate(selected->window->getWidth(),selected->window->getHeight());
+    ofPushMatrix();
+    renderViewSelected.allocate(selected->window.lock()->getWidth(),selected->window.lock()->getHeight());
     renderViewSelected.begin();
+    glClearColor(0.,0.,0.,  255.);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     selected->draw();//0,0,100,100);
+
     renderViewSelected.end();
     renderViewSelected.draw(b);
+
+    ofSetLineWidth(.1);
+    ofPoint scale = ofPoint(b.width,b.height) / selected->window.lock()->getWindowSize();
+    int lidx = 0;
+
+    for(auto & l:selected->layers){
+      int numV = l.drawMesh.getNumVertices();
+      ofSetColor(lidx%3==0?255:0,lidx%3==1?255:0,lidx%3==2?255:0,255);
+      for(int i = 0; i < numV ; i++){
+
+        ofDrawLine(l.drawMesh.getVertex((i-2 +numV)%numV )*scale,l.drawMesh.getVertex(i)*scale);
+      }
+      lidx++;
+    }
+    ofPopMatrix();
     ofPopStyle();
   }
 
@@ -68,9 +87,10 @@ void OutputViewManager::resized(){
 }
 
 
-void OutputViewManager::addView(const string & name){
-  shared_ptr<OutputView> v = make_shared<OutputView>(name);
+void OutputViewManager::addView(const string & name,int x,int y, int w,int h){
+  shared_ptr<OutputView> v = OutputView::generate(name, x,  y,w,h);
   views.push_back(v);
+//  v->window->setWindowShape(w,h);
 //  v->viewResized.add(this,&OutputViewManager::viewResized,0);
 
 }
@@ -88,8 +108,9 @@ shared_ptr<OutputView>  OutputViewManager::getViewForName(const string & name){
 }
 void OutputViewManager::selectView(string name){
   selected = getViewForName(name);
+  auto sel = selected;
   videoLayerManagerUI->buildFromOutView(  selected);
-  viewSelectedEvent.notify(selected);
+  viewSelectedEvent.notify(sel);
 }
 void OutputViewManager::monitorResized(int num, ofPoint size){
 
@@ -175,7 +196,7 @@ int screenNum = 0;
 void OutputViewManager::newGUIEvent(  ofxUIEventArgs & a){
   if(a.widget==addScreen && !addScreen->getValue()){
     string name = ofToString(screenNum);
-    addView(name);
+    addView(name,200,200,300,300);
     viewsDDL->addToggle(name);
     screenNum++;
   }
